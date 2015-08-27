@@ -60,6 +60,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onClick(View v) {
+        int clickedViewId = v.getId();
+        if (clickedViewId == R.id.get_location) {
+            getLastKnownPosition();
+        } else if (clickedViewId == R.id.insert_contact) {
+            insertDummyContact();
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
             if (PermissionUtil.verifyPermissions(grantResults)) {
@@ -86,21 +96,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        int clickedViewId = v.getId();
-        if (clickedViewId == R.id.get_location) {
-            getLastKnownPosition();
-        } else if (clickedViewId == R.id.insert_contact) {
-            insertDummyContact();
-        }
-    }
-
     //Gets the last known location from the Network_Provider
     private void getLastKnownPosition() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
 
+        //Check if the required permissions are already available
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 

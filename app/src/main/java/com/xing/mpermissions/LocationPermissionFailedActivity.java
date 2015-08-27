@@ -27,13 +27,6 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_location_permission_failed, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -58,7 +51,7 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
     private void requestLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                //User Denied and selected never ask again --> Show info that he needs to go to settings
+                //User Denied and selected "Don't ask again" --> Show info that he needs to go to settings
                 showSettingsDialog();
             } else {
                 ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_LOCATION, MainActivity.REQUEST_LOCATION);
