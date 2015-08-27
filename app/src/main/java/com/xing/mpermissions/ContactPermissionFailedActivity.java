@@ -71,7 +71,7 @@ public class ContactPermissionFailedActivity extends AppCompatActivity implement
                 finish();
             }
             else{
-                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?!", Snackbar.LENGTH_SHORT).show();
             }
         }
     }

@@ -76,41 +76,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    private void getLastKnownPosition() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // Define a listener that responds to location updates
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        // Or use LocationManager.GPS_PROVIDER
-
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
-        } else {
-            Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-            Log.d("Longitude", String.valueOf(lastKnownLocation.getLongitude()));
-            Log.d("Latitude", String.valueOf(lastKnownLocation.getLatitude()));
-            Snackbar.make(mLayout, "Longitude: " + lastKnownLocation.getLongitude() + "Latitude: " + lastKnownLocation.getLatitude(), Snackbar.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
             if (PermissionUtil.verifyPermissions(grantResults)) {
                 getLastKnownPosition();
-            }else {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    Intent failedLocationPermission = new Intent(this, LocationPermissionFailedActivity.class);
-                    startActivity(failedLocationPermission);
-                }
+                Snackbar.make(mLayout, "Location permission successfully granted", Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(mLayout, "Location permission NOT granted", Snackbar.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_CONTACTS) {
             if (PermissionUtil.verifyPermissions(grantResults)) {
                 insertDummyContact();
+                Snackbar.make(mLayout, "Contacts permission successfully granted", Snackbar.LENGTH_SHORT).show();
             } else {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_CONTACTS)) {
-                    Intent failedContactPermission = new Intent(this, ContactPermissionFailedActivity.class);
-                    startActivity(failedContactPermission);
-                }
+                Snackbar.make(mLayout, "Contacts permission NOT granted", Snackbar.LENGTH_SHORT).show();
             }
         }
     }
@@ -124,6 +104,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void getLastKnownPosition() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                Intent failedLocationPermission = new Intent(this, LocationPermissionFailedActivity.class);
+                startActivity(failedLocationPermission);
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
+            }
+        } else {
+            Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+            Log.d("Longitude", String.valueOf(lastKnownLocation.getLongitude()));
+            Log.d("Latitude", String.valueOf(lastKnownLocation.getLatitude()));
+            Snackbar.make(mLayout, "Longitude: " + lastKnownLocation.getLongitude() + " Latitude: " + lastKnownLocation.getLatitude(), Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Accesses the Contacts content provider directly to insert a new contact.
      * <p/>
@@ -131,8 +131,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 //    @RequiresPermission(allOf = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS})
     private void insertDummyContact() {
-        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
+                Intent failedContactsPermission = new Intent(this, ContactPermissionFailedActivity.class);
+                startActivity(failedContactsPermission);
+            } else {
+                ActivityCompat.requestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+            }
         } else {
             // Two operations are needed to insert a new contact.
             ArrayList<ContentProviderOperation> operations = new ArrayList<>(2);
@@ -150,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .withValue(ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                            "TestContact");
+                            "__DUMMY ENTRY");
             operations.add(op.build());
 
             // Apply the operations.

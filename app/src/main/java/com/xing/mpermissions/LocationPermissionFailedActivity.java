@@ -2,11 +2,11 @@ package com.xing.mpermissions;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,20 +58,19 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
     private void requestLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_LOCATION, MainActivity.REQUEST_LOCATION);
-        }else{
+        } else {
             Snackbar.make(mLayout, "You already have this permission, FOOL!", Snackbar.LENGTH_SHORT);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == MainActivity.REQUEST_LOCATION){
-            if(PermissionUtil.verifyPermissions(grantResults)){
+        if (requestCode == MainActivity.REQUEST_LOCATION) {
+            if (PermissionUtil.verifyPermissions(grantResults)) {
                 Toast.makeText(this, "Awesome, Thanks - Permission granted", Toast.LENGTH_SHORT).show();
                 finish();
-            }
-            else{
-                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION", Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?!", Snackbar.LENGTH_SHORT).show();
             }
         }
     }
