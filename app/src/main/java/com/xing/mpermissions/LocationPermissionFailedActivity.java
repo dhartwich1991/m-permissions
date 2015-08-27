@@ -57,7 +57,12 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
 
     private void requestLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_LOCATION, MainActivity.REQUEST_LOCATION);
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                //User Denied and selected never ask again --> Show info that he needs to go to settings
+                showSettingsDialog();
+            } else {
+                ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_LOCATION, MainActivity.REQUEST_LOCATION);
+            }
         } else {
             Snackbar.make(mLayout, "You already have this permission, FOOL!", Snackbar.LENGTH_SHORT);
         }
@@ -73,5 +78,13 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
                 Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?! ლ(ಠ_ಠლ) ", Snackbar.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * Creates a new instance of a SettingsDialogFragment and shows it to the user
+     */
+    public void showSettingsDialog() {
+        MainActivity.SettingsDialogFragment fragment = new MainActivity.SettingsDialogFragment();
+        fragment.show(getSupportFragmentManager(), "SettingsFragment");
     }
 }

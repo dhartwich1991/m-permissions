@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -50,23 +49,34 @@ public class ContactPermissionFailedActivity extends AppCompatActivity implement
 
     private void requestContactsPermission() {
         if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_CONTACT, MainActivity.REQUEST_CONTACTS);
-        }else{
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
+                showSettingsDialog();
+            } else {
+                ActivityCompat.requestPermissions(this, MainActivity.PERMISSIONS_CONTACT, MainActivity.REQUEST_CONTACTS);
+            }
+        } else {
             Snackbar.make(mLayout, "You already have this permission, FOOL!", Snackbar.LENGTH_SHORT);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == MainActivity.REQUEST_CONTACTS){
-            if(PermissionUtil.verifyPermissions(grantResults)){
+        if (requestCode == MainActivity.REQUEST_CONTACTS) {
+            if (PermissionUtil.verifyPermissions(grantResults)) {
                 Toast.makeText(this, "Awesome, Thanks - Permission granted", Toast.LENGTH_SHORT).show();
                 finish();
-            }
-            else{
+            } else {
                 Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?! ლ(ಠ_ಠლ)", Snackbar.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * Creates a new instance of a SettingsDialogFragment and shows it to the user
+     */
+    public void showSettingsDialog() {
+        MainActivity.SettingsDialogFragment fragment = new MainActivity.SettingsDialogFragment();
+        fragment.show(getSupportFragmentManager(), "SettingsFragment");
     }
 }
 

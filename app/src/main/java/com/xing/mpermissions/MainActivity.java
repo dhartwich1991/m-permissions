@@ -175,11 +175,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void showSettingsDialog() {
+    /**
+     * Creates a new instance of a SettingsDialogFragment and shows it to the user
+     * */
+    public void showSettingsDialog() {
         SettingsDialogFragment fragment = new SettingsDialogFragment();
         fragment.show(getSupportFragmentManager(), "SettingsFragment");
     }
 
+    /**
+     * The SettingsDialogFragment that is presented to the user whenever
+     * he denied a permission with also checking Don't ask again, in case he is
+     * trying to use this feature anyways.
+     * */
     public static class SettingsDialogFragment extends DialogFragment {
         @NonNull
         @Override
