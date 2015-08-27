@@ -23,7 +23,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -44,7 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int REQUEST_CONTACTS = 2;
     public static final String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS,
             Manifest.permission.WRITE_CONTACTS};
+    public static final String PACKAGE_NAME = "com.xing.mpermissions";
 
+    //Layout which is needed to show the SnackBar
     private View mLayout;
 
     @Override
@@ -59,21 +60,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION) {
             if (PermissionUtil.verifyPermissions(grantResults)) {
@@ -82,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 Snackbar.make(mLayout, "Location permission NOT granted", Snackbar.LENGTH_SHORT).show();
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    //User Denied and selected never ask again --> Show info that he needs to go to settings
+                    //User Denied and selected "Don't ask again" --> Show info that he needs to go to settings
                     showSettingsDialog();
                 }
             }
@@ -93,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 Snackbar.make(mLayout, "Contacts permission NOT granted", Snackbar.LENGTH_SHORT).show();
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
-                    //User Denied and selected never ask again --> Show info that he needs to go to settings
+                    //User Denied and selected "Don't ask again" --> Show info that he needs to go to settings
                     showSettingsDialog();
                 }
             }
@@ -102,26 +88,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.get_location) {
+        int clickedViewId = v.getId();
+        if (clickedViewId == R.id.get_location) {
             getLastKnownPosition();
-        } else if (v.getId() == R.id.insert_contact) {
+        } else if (clickedViewId == R.id.insert_contact) {
             insertDummyContact();
         }
     }
 
+    //Gets the last known location from the Network_Provider
     private void getLastKnownPosition() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         String locationProvider = LocationManager.NETWORK_PROVIDER;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //In case the user denied the permission before --> Show the Rationale Activity
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 Intent failedLocationPermission = new Intent(this, LocationPermissionFailedActivity.class);
                 startActivity(failedLocationPermission);
             } else {
+                //Otherwise just show the SystemDialog
                 ActivityCompat.requestPermissions(this, PERMISSIONS_LOCATION, REQUEST_LOCATION);
             }
         } else {
+            //If the permission is already granted just do what needs to be done
             Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             Log.d("Longitude", String.valueOf(lastKnownLocation.getLongitude()));
             Log.d("Latitude", String.valueOf(lastKnownLocation.getLatitude()));
@@ -136,14 +128,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
 //    @RequiresPermission(allOf = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS})
     private void insertDummyContact() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+        //Check if permission is already available
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            //If the user denied the permission request before, show the rationale activity
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
                 Intent failedContactsPermission = new Intent(this, ContactPermissionFailedActivity.class);
                 startActivity(failedContactsPermission);
             } else {
+                //If the app didn't request the permission yet, go ahead and show the system dialog
                 ActivityCompat.requestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
             }
         } else {
+            //If the Permission is already granted just do the required action.
             // Two operations are needed to insert a new contact.
             ArrayList<ContentProviderOperation> operations = new ArrayList<>(2);
 
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Creates a new instance of a SettingsDialogFragment and shows it to the user
-     * */
+     */
     public void showSettingsDialog() {
         SettingsDialogFragment fragment = new SettingsDialogFragment();
         fragment.show(getSupportFragmentManager(), "SettingsFragment");
@@ -187,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * The SettingsDialogFragment that is presented to the user whenever
      * he denied a permission with also checking Don't ask again, in case he is
      * trying to use this feature anyways.
-     * */
+     */
     public static class SettingsDialogFragment extends DialogFragment {
         @NonNull
         @Override
@@ -202,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void onClick(DialogInterface dialog, int id) {
                             //Open Settings Section of my app
                             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            intent.setData(Uri.parse("package:" + "com.xing.mpermissions"));
+                            intent.setData(Uri.parse("package:" + PACKAGE_NAME));
                             startActivity(intent);
                         }
                     })
