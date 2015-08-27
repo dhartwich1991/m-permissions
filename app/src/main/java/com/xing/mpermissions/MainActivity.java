@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             Log.d("Longitude", String.valueOf(lastKnownLocation.getLongitude()));
             Log.d("Latitude", String.valueOf(lastKnownLocation.getLatitude()));
-            Snackbar.make(mLayout, "Longitude: " + lastKnownLocation.getLongitude() + " Latitude: " + lastKnownLocation.getLatitude(), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mLayout, "Longitude: " + lastKnownLocation.getLongitude() + " Latitude: " + lastKnownLocation.getLatitude(), Snackbar.LENGTH_LONG).show();
         }
     }
 
