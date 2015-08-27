@@ -27,13 +27,16 @@
         android:textStyle="bold"
         android:text="DOH! You need to grant the location permission"
         android:id="@+id/textView2"
+        android:textSize="30sp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grant Permission!"
+        android:textSize="24sp"
         android:id="@+id/warning_location_permission"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
@@ -42,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="24sp"
         android:text="We need it so we can know where you are at any time"
         android:id="@+id/textView3"
         android:textColor="@android:color/white"

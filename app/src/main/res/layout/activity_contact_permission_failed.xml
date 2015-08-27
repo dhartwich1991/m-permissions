@@ -27,6 +27,7 @@
         android:textStyle="bold"
         android:text="DOH! You need to grant the contacts permission"
         android:id="@+id/textView2"
+        android:textSize="30sp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
@@ -34,6 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Grant Permission!"
+        android:textSize="24sp"
         android:id="@+id/warning_contacts_permission"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
@@ -43,6 +45,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="We need it so we can steal all your contacts"
+        android:textSize="24sp"
         android:id="@+id/textView3"
         android:textColor="@android:color/white"
         android:layout_below="@+id/textView2"
