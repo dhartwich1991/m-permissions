@@ -70,7 +70,7 @@ public class LocationPermissionFailedActivity extends AppCompatActivity implemen
                 Toast.makeText(this, "Awesome, Thanks - Permission granted", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
-                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?!", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(mLayout, "Y U NO GIVE PERMISSION?! ლ(ಠ_ಠლ) ", Snackbar.LENGTH_SHORT).show();
             }
         }
     }

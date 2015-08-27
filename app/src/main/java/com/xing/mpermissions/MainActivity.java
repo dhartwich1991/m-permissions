@@ -1,23 +1,28 @@
 package com.xing.mpermissions;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.OperationApplicationException;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +32,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
-     * Id to identify a contacts permission request.
+     * Id to identify a location permission request.
      */
     public static final int REQUEST_LOCATION = 1;
     public static final String[] PERMISSIONS_LOCATION = {Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -37,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Id to identify a contacts permission request.
      */
     public static final int REQUEST_CONTACTS = 2;
-
     public static final String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS,
             Manifest.permission.WRITE_CONTACTS};
 
@@ -52,13 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button contactButton = (Button) findViewById(R.id.insert_contact);
         contactButton.setOnClickListener(this);
         locationButton.setOnClickListener(this);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override
@@ -84,6 +81,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Snackbar.make(mLayout, "Location permission successfully granted", Snackbar.LENGTH_SHORT).show();
             } else {
                 Snackbar.make(mLayout, "Location permission NOT granted", Snackbar.LENGTH_SHORT).show();
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    //User Denied and selected never ask again --> Show info that he needs to go to settings
+                    showSettingsDialog();
+                }
             }
         } else if (requestCode == REQUEST_CONTACTS) {
             if (PermissionUtil.verifyPermissions(grantResults)) {
@@ -91,6 +92,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Snackbar.make(mLayout, "Contacts permission successfully granted", Snackbar.LENGTH_SHORT).show();
             } else {
                 Snackbar.make(mLayout, "Contacts permission NOT granted", Snackbar.LENGTH_SHORT).show();
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
+                    //User Denied and selected never ask again --> Show info that he needs to go to settings
+                    showSettingsDialog();
+                }
             }
         }
     }
@@ -167,6 +172,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } finally {
                 Snackbar.make(mLayout, "Contact added", Snackbar.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    private void showSettingsDialog() {
+        SettingsDialogFragment fragment = new SettingsDialogFragment();
+        fragment.show(getSupportFragmentManager(), "SettingsFragment");
+    }
+
+    public static class SettingsDialogFragment extends DialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the Builder class for convenient dialog construction
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("Permission required");
+            builder.setMessage("In order to use this feature you need to enable the appropriate setting.\n" +
+                    "Therefor you have to press \"Go to settings\" and enable them in the permissions setting.")
+                    .setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            //Open Settings Section of my app
+                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            intent.setData(Uri.parse("package:" + "com.xing.mpermissions"));
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                            dialog.dismiss();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            return builder.create();
         }
     }
 }
