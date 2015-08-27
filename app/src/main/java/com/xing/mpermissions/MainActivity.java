@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /**
      * Accesses the Contacts content provider directly to insert a new contact.
      * <p/>
-     * The contact is called "__DUMMY ENTRY" and only contains a name.
+     * The contact is called "__GDG DUMMY ENTRY" and only contains a name.
      */
 //    @RequiresPermission(allOf = {Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS})
     private void insertDummyContact() {
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .withValue(ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                            "__DUMMY ENTRY");
+                            "__GDG DUMMY ENTRY");
             operations.add(op.build());
 
             // Apply the operations.
