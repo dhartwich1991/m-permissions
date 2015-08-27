@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
@@ -90,7 +91,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Snackbar.make(mLayout, "Contacts permission NOT granted", Snackbar.LENGTH_SHORT).show();
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
                     //User Denied and selected "Don't ask again" --> Show info that he needs to go to settings
-                    showSettingsDialog();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        showSettingsDialog();
+                    }
+                    else{
+                        Snackbar.make(mLayout, "Permission is not available on pre Marshmallow", Snackbar.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
