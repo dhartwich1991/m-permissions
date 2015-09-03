@@ -35,8 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * Id to identify a location permission request.
      */
     public static final int REQUEST_LOCATION = 1;
-    public static final String[] PERMISSIONS_LOCATION = {Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION};
+    public static final String[] PERMISSIONS_LOCATION = {Manifest.permission.ACCESS_COARSE_LOCATION};
 
     /**
      * Id to identify a contacts permission request.
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Snackbar.make(mLayout, "Location permission NOT granted", Snackbar.LENGTH_SHORT).show();
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
                     //User Denied and selected "Don't ask again" --> Show info that he needs to go to settings
-                    showSettingsDialog();
+                        showSettingsDialog();
                 }
             }
         } else if (requestCode == REQUEST_CONTACTS) {
@@ -108,8 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String locationProvider = LocationManager.NETWORK_PROVIDER;
 
         //Check if the required permissions are already available
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             //In case the user denied the permission before --> Show the Rationale Activity
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
