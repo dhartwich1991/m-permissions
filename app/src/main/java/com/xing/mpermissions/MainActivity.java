@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     .withValue(ContactsContract.Data.MIMETYPE,
                             ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
-                            "__GDG DUMMY ENTRY");
+                            "__DroidConSTH is awesome Dummy");
             operations.add(op.build());
 
             // Apply the operations.
